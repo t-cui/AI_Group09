@@ -5,19 +5,19 @@ sys.path.insert(0, '../bomberman')
 from entity import CharacterEntity
 from sensed_world import SensedWorld
 from colorama import Fore, Back
-
 Wvalues=[]
 class TestCharacter(CharacterEntity):
 
     def do(self, wrld):
+        global Wvalues
         # Your code here
         # action: up, down, left, right, leftup, leftdown, rightup, rightdown, boom
-        if(Wvalues[0] != []):
+        if(Wvalues == []):
             Wvalues = [10, -100, -100, 1000, -10, -100]
         sWrld= SensedWorld.from_world(wrld)
         (newWorld, events) = sWrld.next()
-        currscore = sWrld.scores["me"]
-        nextscore = newWorld.scores["me"]
+        currscore = wrld.scores["s1v1"]
+        nextscore = newWorld.scores["s1v1"]
         currx=self.x
         curry=self.y
         nextx=[]
@@ -31,8 +31,10 @@ class TestCharacter(CharacterEntity):
         # nextx_rightdown, nexty_rightdown =  self.nextstep(wrld, currx, curry, "rightdown")
         # nextx_rightup, nexty_rightup =  self.nextstep(wrld, currx, curry, "rightup")
         direction= ["up", "down", "left", "right", "leftup", "leftdown", "rightup", "rightdown"]
-        for i in range(len(direction)):
-            nextdirx, nextdiry = self.nextstep(wrld, currx, curry, direction[i])
+        for i in direction:
+            nextdirx = 0
+            nextdiry = 0
+            (nextdirx, nextdiry) = self.nextstep(wrld, currx, curry, i)
             nextx.append(nextdirx)
             nexty.append(nextdiry)
         currQval = self.Qvalue(wrld, Wvalues[0], Wvalues[1], Wvalues[2], Wvalues[3], Wvalues[4], Wvalues[5], currx, curry)
@@ -88,6 +90,7 @@ class TestCharacter(CharacterEntity):
             if(curry-1>=0):
                 nexty=nexty-1
             return nextx, nexty
+        return nextx, nexty
                                
     def Qvalue (self, wrld, Wa, Wb, Wc, Wd, We, Wf, currx, curry):
         # features: destory a wall, monster, monster, exit, bomb, explosion 
@@ -136,8 +139,8 @@ class TestCharacter(CharacterEntity):
     def FindMons(self, wrld):
         lx = []
         ly = []
-        for x in wrld.width():
-            for y in wrld.height():
+        for x in range (wrld.width()):
+            for y in range (wrld.height()):
                 if(wrld.monsters_at(x,y)!=[]):
                     lx.append(x)
                     ly.append(y)
